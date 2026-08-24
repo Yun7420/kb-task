@@ -14,11 +14,22 @@ const SignInPage = () => {
         <h1 className={styles.title}>로그인</h1>
         <FormProvider {...methods}>
           <form className={styles.form} onSubmit={onSubmit}>
-            <FormInput name="email" label="이메일" type="email" />
-            <FormInput name="password" label="비밀번호" type="password" />
+            <FormInput
+              name="email"
+              label="이메일"
+              type="email"
+              placeholder="example@kb.com"
+            />
+            <FormInput
+              name="password"
+              label="비밀번호"
+              type="password"
+              placeholder="영문·숫자 8~24자"
+            />
             <SubmitButton />
           </form>
         </FormProvider>
+        <p className={styles.hint}>테스트 계정 · test@kb.com / test1234</p>
       </div>
 
       <Modal isOpen={errorMessage !== null} onClose={closeError}>
