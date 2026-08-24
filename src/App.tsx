@@ -1,5 +1,8 @@
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes/router";
+
 function App() {
-  return <div>KB 과제</div>;
+  return <RouterProvider router={router} />;
 }
 
 export default App;
