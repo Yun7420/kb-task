@@ -3,7 +3,7 @@ import type { TaskItem } from "../types";
 export const tasks: TaskItem[] = Array.from({ length: 50 }, (_, i) => {
   const id = i + 1;
   return {
-    id,
+    id: String(id),
     title: `할 일 ${id}`,
     memo: `${id}번째 할 일에 대한 메모입니다.`,
     status: id % 3 === 0 ? "DONE" : "TODO",

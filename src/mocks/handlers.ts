@@ -1,48 +1,67 @@
 import { http, HttpResponse } from "msw";
 import { tasks, user } from "./db";
 
-// 목킹용 유효 계정 (이 값으로 로그인해야 성공)
 const VALID_EMAIL = "test@kb.com";
 const VALID_PASSWORD = "test1234";
 
+function isAuthorized(request: Request) {
+  return !!request.headers.get("Authorization")?.startsWith("Bearer ");
+}
+
+const unauthorized = () =>
+  HttpResponse.json({ errorMessage: "인증이 필요합니다." }, { status: 401 });
+
 export const handlers = [
-  // 로그인
+  // 로그인 (200/400)
   http.post("/api/sign-in", async ({ request }) => {
     const { email, password } = (await request.json()) as {
       email: string;
       password: string;
     };
-
-    // 계정이 안 맞으면 400 + 에러 메시지 (요구사항: non-200 → 에러 모달)
     if (email !== VALID_EMAIL || password !== VALID_PASSWORD) {
       return HttpResponse.json(
         { errorMessage: "이메일 또는 비밀번호가 올바르지 않습니다." },
         { status: 400 },
       );
     }
-
-    // 성공 → 토큰 반환 (openapi의 AuthTokenResponse)
     return HttpResponse.json({
       accessToken: "mock-access-token",
       refreshToken: "mock-refresh-token",
     });
   }),
 
-  // 토큰 재발급
-  http.post("/api/refresh", () => {
+  http.post("/api/refresh", ({ cookies }) => {
+    const token = cookies.token;
+    // 쿠키 없음/만료 → 401
+    if (!token || token === "expired") {
+      return HttpResponse.json(
+        { errorMessage: "리프레시 토큰이 유효하지 않습니다." },
+        { status: 401 },
+      );
+    }
+    // 재발급 실패 → 400
+    if (token === "invalid") {
+      return HttpResponse.json(
+        { errorMessage: "토큰 재발급에 실패했습니다." },
+        { status: 400 },
+      );
+    }
+    // 정상 → 200
     return HttpResponse.json({
       accessToken: "mock-access-token",
       refreshToken: "mock-refresh-token",
     });
   }),
 
-  // 회원정보
-  http.get("/api/user", () => {
+  // 회원정보 (200/401)
+  http.get("/api/user", ({ request }) => {
+    if (!isAuthorized(request)) return unauthorized();
     return HttpResponse.json(user);
   }),
 
-  // 대시보드 통계 (tasks 배열로 계산)
-  http.get("/api/dashboard", () => {
+  // 대시보드 (200/401)
+  http.get("/api/dashboard", ({ request }) => {
+    if (!isAuthorized(request)) return unauthorized();
     const numOfDoneTask = tasks.filter((t) => t.status === "DONE").length;
     const numOfRestTask = tasks.filter((t) => t.status === "TODO").length;
     return HttpResponse.json({
@@ -52,32 +71,30 @@ export const handlers = [
     });
   }),
 
-  // 할 일 목록 (페이지네이션)
+  // 목록 (200/401)
   http.get("/api/task", ({ request }) => {
+    if (!isAuthorized(request)) return unauthorized();
     const url = new URL(request.url);
     const page = Number(url.searchParams.get("page")) || 1;
     const PAGE_SIZE = 10;
-
     const start = (page - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
-    const data = tasks.slice(start, end);
-    const hasNext = end < tasks.length;
-
-    return HttpResponse.json({ data, hasNext });
+    return HttpResponse.json({
+      data: tasks.slice(start, end),
+      hasNext: end < tasks.length,
+    });
   }),
 
-  // 할 일 상세
-  http.get("/api/task/:id", ({ params }) => {
-    const id = Number(params.id);
-    const task = tasks.find((t) => t.id === id);
-
+  // 상세 (200/401/404)
+  http.get("/api/task/:id", ({ request, params }) => {
+    if (!isAuthorized(request)) return unauthorized();
+    const task = tasks.find((t) => t.id === params.id);
     if (!task) {
       return HttpResponse.json(
         { errorMessage: "할 일을 찾을 수 없습니다." },
         { status: 404 },
       );
     }
-
     return HttpResponse.json({
       title: task.title,
       memo: task.memo,
@@ -85,19 +102,17 @@ export const handlers = [
     });
   }),
 
-  // 할 일 삭제
-  http.delete("/api/task/:id", ({ params }) => {
-    const id = Number(params.id);
-    const index = tasks.findIndex((t) => t.id === id);
-
+  // 삭제 (200/401/404)
+  http.delete("/api/task/:id", ({ request, params }) => {
+    if (!isAuthorized(request)) return unauthorized();
+    const index = tasks.findIndex((t) => t.id === params.id);
     if (index === -1) {
       return HttpResponse.json(
         { errorMessage: "할 일을 찾을 수 없습니다." },
         { status: 404 },
       );
     }
-
-    tasks.splice(index, 1); // 실제로 배열에서 제거
+    tasks.splice(index, 1);
     return HttpResponse.json({ success: true });
   }),
 ];
