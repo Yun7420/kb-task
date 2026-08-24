@@ -7,9 +7,15 @@ interface FormInputProps {
   name: keyof SignInInput;
   label: string;
   type?: string;
+  placeholder?: string;
 }
 
-export function FormInput({ name, label, type = "text" }: FormInputProps) {
+export function FormInput({
+  name,
+  label,
+  type = "text",
+  placeholder,
+}: FormInputProps) {
   const { register } = useFormContext<SignInInput>();
   const { errors } = useFormState<SignInInput>({ name });
   const error = errors[name];
@@ -19,7 +25,12 @@ export function FormInput({ name, label, type = "text" }: FormInputProps) {
       <label htmlFor={name} className={styles.label}>
         {label}
       </label>
-      <Input id={name} type={type} {...register(name)} />
+      <Input
+        id={name}
+        type={type}
+        placeholder={placeholder}
+        {...register(name)}
+      />
       {error && <p className={styles.error}>{error.message}</p>}
     </div>
   );
