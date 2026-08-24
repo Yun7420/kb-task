@@ -7,3 +7,4 @@ export type {
 } from "./task";
 export type { AuthTokenResponse } from "./auth";
 export type { DashboardResponse } from "./dashboard";
+export type { UserResponse } from "./user";
