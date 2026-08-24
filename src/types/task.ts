@@ -6,3 +6,8 @@ export interface TaskItem {
   memo: string;
   status: TaskStatus;
 }
+
+export interface TaskListResponse {
+  data: TaskItem[];
+  hasNext: boolean;
+}
