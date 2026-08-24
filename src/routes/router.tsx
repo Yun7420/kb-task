@@ -5,7 +5,7 @@ import SignInPage from "@/pages/sign-in";
 import DashboardPage from "@/pages/dashboard";
 import TaskListPage from "@/pages/task-list";
 import TaskDetailPage from "@/pages/task-detail";
-import UserPage from "@/pages/UserPage";
+import UserPage from "@/pages/user";
 
 export const router = createBrowserRouter([
   {
