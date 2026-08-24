@@ -1,7 +1,7 @@
 export type TaskStatus = "TODO" | "DONE";
 
 export interface TaskItem {
-  id: number;
+  id: string;
   title: string;
   memo: string;
   status: TaskStatus;
