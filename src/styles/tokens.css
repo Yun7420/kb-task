@@ -1,0 +1,26 @@
+:root {
+  /* Brand - primary(파랑) */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-active: #1e40af;
+
+  /* Disabled(회색) - 버튼 비활성 상태 */
+  --color-disabled: #d1d5db;
+  --color-disabled-text: #9ca3af;
+
+  /* Text */
+  --color-text: #1f2937;
+  --color-text-secondary: #6b7280;
+
+  /* Surface */
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+
+  /* Status - 에러 메시지/모달용 */
+  --color-error: #dc2626;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+}
