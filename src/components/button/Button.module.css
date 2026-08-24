@@ -1,0 +1,29 @@
+.button {
+  margin: 0;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.button:active:not(:disabled) {
+  background-color: var(--color-primary-active);
+}
+
+.button:disabled {
+  background-color: var(--color-disabled);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}

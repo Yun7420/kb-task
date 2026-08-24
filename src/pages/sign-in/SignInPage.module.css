@@ -1,0 +1,53 @@
+.page {
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+.card {
+  margin: 0;
+  padding: 40px 32px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.title {
+  margin: 0 0 28px 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.modalText {
+  margin: 0 0 16px 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.modalActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
