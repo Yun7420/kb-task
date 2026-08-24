@@ -4,7 +4,7 @@ import { ProtectedRoute } from "./protected-route";
 import SignInPage from "@/pages/sign-in";
 import DashboardPage from "@/pages/DashboardPage";
 import TaskListPage from "@/pages/task-list";
-import TaskDetailPage from "@/pages/TaskDetailPage";
+import TaskDetailPage from "@/pages/task-detail";
 import UserPage from "@/pages/UserPage";
 
 export const router = createBrowserRouter([
