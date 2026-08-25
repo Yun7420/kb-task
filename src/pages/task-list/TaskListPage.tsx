@@ -3,10 +3,29 @@ import { TaskCard } from "./components";
 import styles from "./TaskListPage.module.css";
 
 const TaskListPage = () => {
-  const { parentRef, tasks, virtualizer, isLoading, isFetchingNextPage } =
-    useTaskList();
+  const {
+    parentRef,
+    tasks,
+    virtualizer,
+    isLoading,
+    isError,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useTaskList();
 
   if (isLoading) return <div>불러오는 중...</div>;
+  // 이미 불러온 페이지가 있으면 목록을 유지한다 (다음 페이지 실패로 전체를 감추지 않음)
+  if (isError && tasks.length === 0)
+    return <div>할 일 목록을 불러오지 못했습니다.</div>;
+
+  if (tasks.length === 0) {
+    return (
+      <div>
+        <h1>할 일 목록</h1>
+        <p>등록된 할 일이 없습니다.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -34,6 +53,7 @@ const TaskListPage = () => {
         </div>
       </div>
       {isFetchingNextPage && <div>더 불러오는 중...</div>}
+      {isFetchNextPageError && <p>다음 목록을 불러오지 못했습니다.</p>}
     </div>
   );
 };

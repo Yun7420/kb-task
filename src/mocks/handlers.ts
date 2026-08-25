@@ -4,12 +4,27 @@ import { tasks, user } from "./db";
 const VALID_EMAIL = "test@kb.com";
 const VALID_PASSWORD = "test1234";
 
+// 만료 토큰 시연용 - localStorage의 accessToken을 이 값으로 바꾸면 401 흐름을 확인할 수 있음
+const EXPIRED_TOKEN = "expired-token";
+
+// 실서버라면 HttpOnly 쿠키로 관리될 refresh 토큰. 목에서는 고정값을 사용한다.
+const REFRESH_TOKEN = "mock-refresh-token";
+
+// 재발급 때마다 다른 accessToken을 내려 재발급이 실제로 일어났는지 확인할 수 있게 한다
+let issuedAccessTokenCount = 0;
+const issueAccessToken = () => `access-token-${++issuedAccessTokenCount}`;
+
 function isAuthorized(request: Request) {
-  return !!request.headers.get("Authorization")?.startsWith("Bearer ");
+  const authorization = request.headers.get("Authorization");
+  if (!authorization?.startsWith("Bearer ")) return false;
+  return authorization.slice("Bearer ".length) !== EXPIRED_TOKEN;
 }
 
 const unauthorized = () =>
-  HttpResponse.json({ errorMessage: "인증이 필요합니다." }, { status: 401 });
+  HttpResponse.json(
+    { errorMessage: "인증이 만료되었습니다. 다시 로그인해주세요." },
+    { status: 401 },
+  );
 
 export const handlers = [
   // 로그인 (200/400)
@@ -24,10 +39,17 @@ export const handlers = [
         { status: 400 },
       );
     }
-    return HttpResponse.json({
-      accessToken: "mock-access-token",
-      refreshToken: "mock-refresh-token",
-    });
+    return HttpResponse.json(
+      {
+        accessToken: "mock-access-token",
+        refreshToken: REFRESH_TOKEN,
+      },
+      {
+        // 실제 백엔드가 하는 일을 목이 대신한다. 프론트는 쿠키를 직접 만지지 않는다.
+        // 실서버라면 HttpOnly·Secure가 함께 붙지만, 클라이언트 사이드 목에서는 적용할 수 없다.
+        headers: { "Set-Cookie": `token=${REFRESH_TOKEN}; Path=/` },
+      },
+    );
   }),
 
   http.post("/api/refresh", ({ cookies }) => {
@@ -46,10 +68,10 @@ export const handlers = [
         { status: 400 },
       );
     }
-    // 정상 → 200
+    // 정상 → 200 (재발급마다 다른 accessToken)
     return HttpResponse.json({
-      accessToken: "mock-access-token",
-      refreshToken: "mock-refresh-token",
+      accessToken: issueAccessToken(),
+      refreshToken: REFRESH_TOKEN,
     });
   }),
 
@@ -80,7 +102,10 @@ export const handlers = [
     const start = (page - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
     return HttpResponse.json({
-      data: tasks.slice(start, end),
+      // TaskItem에 정의된 필드만 반환 (registerDatetime은 상세 응답 전용)
+      data: tasks
+        .slice(start, end)
+        .map(({ id, title, memo, status }) => ({ id, title, memo, status })),
       hasNext: end < tasks.length,
     });
   }),
@@ -98,7 +123,7 @@ export const handlers = [
     return HttpResponse.json({
       title: task.title,
       memo: task.memo,
-      registerDatetime: "2026-08-01T09:00:00.000Z",
+      registerDatetime: task.registerDatetime,
     });
   }),
 

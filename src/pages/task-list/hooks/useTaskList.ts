@@ -4,14 +4,21 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { getTasks } from "../api";
 
 export function useTaskList() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteQuery({
-      queryKey: ["tasks"],
-      queryFn: ({ pageParam }) => getTasks(pageParam),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage.hasNext ? allPages.length + 1 : undefined,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    isLoading,
+    isError,
+  } = useInfiniteQuery({
+    queryKey: ["tasks"],
+    queryFn: ({ pageParam }) => getTasks(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasNext ? allPages.length + 1 : undefined,
+  });
 
   const parentRef = useRef<HTMLDivElement>(null);
   const tasks = data?.pages.flatMap((page) => page.data) ?? [];
@@ -32,7 +39,10 @@ export function useTaskList() {
     if (
       lastItem.index >= tasks.length - 1 &&
       hasNextPage &&
-      !isFetchingNextPage
+      !isFetchingNextPage &&
+      // 다음 페이지 요청이 실패한 뒤에는 멈춘다.
+      // 실패해도 hasNextPage는 true로 남아 있어, 막지 않으면 같은 요청을 무한히 반복한다.
+      !isFetchNextPageError
     ) {
       fetchNextPage();
     }
@@ -41,8 +51,17 @@ export function useTaskList() {
     tasks.length,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
     fetchNextPage,
   ]);
 
-  return { parentRef, tasks, virtualizer, isLoading, isFetchingNextPage };
+  return {
+    parentRef,
+    tasks,
+    virtualizer,
+    isLoading,
+    isError,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  };
 }

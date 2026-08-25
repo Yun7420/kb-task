@@ -2,9 +2,9 @@ import { useUser } from "./hooks";
 import styles from "./UserPage.module.css";
 
 const UserPage = () => {
-  const { data, isLoading } = useUser();
+  const { data, isLoading, isError } = useUser();
   if (isLoading) return <div>불러오는 중...</div>;
-  if (!data) return null;
+  if (isError || !data) return <div>회원정보를 불러오지 못했습니다.</div>;
 
   return (
     <div className={styles.page}>

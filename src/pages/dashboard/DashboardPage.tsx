@@ -2,9 +2,9 @@ import { useDashboard } from "./hooks";
 import styles from "./DashboardPage.module.css";
 
 const DashboardPage = () => {
-  const { data, isLoading } = useDashboard();
+  const { data, isLoading, isError } = useDashboard();
   if (isLoading) return <div>불러오는 중...</div>;
-  if (!data) return null;
+  if (isError || !data) return <div>대시보드를 불러오지 못했습니다.</div>;
 
   return (
     <div className={styles.page}>

@@ -8,3 +8,4 @@ export type {
 export type { AuthTokenResponse } from "./auth";
 export type { DashboardResponse } from "./dashboard";
 export type { UserResponse } from "./user";
+export type { ErrorResponse } from "./error";

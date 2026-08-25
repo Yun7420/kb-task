@@ -9,7 +9,7 @@ const TaskDetailPage = () => {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const { data, isLoading, isError } = useTaskDetail(id);
-  const { mutate, isPending } = useDeleteTask();
+  const { mutate, isPending, errorMessage, clearError } = useDeleteTask();
   const [isModalOpen, setModalOpen] = useState(false);
 
   if (isLoading) return <div>불러오는 중...</div>;
@@ -29,7 +29,9 @@ const TaskDetailPage = () => {
     <div className={styles.page}>
       <h1>{data.title}</h1>
       <p className={styles.memo}>{data.memo}</p>
-      <p className={styles.date}>{data.registerDatetime}</p>
+      <p className={styles.date}>
+        {new Date(data.registerDatetime).toLocaleString("ko-KR")}
+      </p>
       <Button type="button" onClick={() => setModalOpen(true)}>
         삭제
       </Button>
@@ -37,9 +39,13 @@ const TaskDetailPage = () => {
       {isModalOpen && (
         <DeleteConfirmModal
           taskId={id}
-          onClose={() => setModalOpen(false)}
+          onClose={() => {
+            clearError();
+            setModalOpen(false);
+          }}
           onConfirm={() => mutate(id)}
           isDeleting={isPending}
+          errorMessage={errorMessage}
         />
       )}
     </div>

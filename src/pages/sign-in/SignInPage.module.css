@@ -6,7 +6,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 100vh;
+  /* GNB(56px) + main 상하 padding(48px)을 뺀 실제 가용 높이 기준 중앙 정렬 */
+  min-height: calc(100vh - 56px - 48px);
   background-color: var(--color-background);
 }
 

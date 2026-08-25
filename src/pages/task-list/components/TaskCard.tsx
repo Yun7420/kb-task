@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { TaskItem } from "@/types";
 import styles from "./TaskCard.module.css";
 
@@ -7,12 +7,10 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task }: TaskCardProps) {
-  const navigate = useNavigate();
-
   return (
-    <div className={styles.card} onClick={() => navigate(`/task/${task.id}`)}>
+    <Link to={`/task/${task.id}`} className={styles.card}>
       <h3 className={styles.title}>{task.title}</h3>
       <p className={styles.memo}>{task.memo}</p>
-    </div>
+    </Link>
   );
 }

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { useAuthStore } from "@/stores";
+import type { ErrorResponse } from "@/types";
 import { signIn } from "../api";
 import { signInSchema, type SignInInput } from "../schema";
 
@@ -23,7 +24,7 @@ export function useSignIn() {
       setAccessToken(accessToken);
       navigate("/");
     } catch (error) {
-      const message = isAxiosError(error)
+      const message = isAxiosError<ErrorResponse>(error)
         ? (error.response?.data?.errorMessage ?? "로그인에 실패했습니다.")
         : "로그인에 실패했습니다.";
       setErrorMessage(message);

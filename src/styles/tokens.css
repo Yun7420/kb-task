@@ -4,6 +4,11 @@
   --color-primary-hover: #1d4ed8;
   --color-primary-active: #1e40af;
 
+  /* 선택된 네비 항목 배경 */
+  --color-primary-surface: #eff6ff;
+  /* primary 배경 위에 올라가는 텍스트 */
+  --color-on-primary: #ffffff;
+
   /* Disabled(회색) - 버튼 비활성 상태 */
   --color-disabled: #d1d5db;
   --color-disabled-text: #9ca3af;

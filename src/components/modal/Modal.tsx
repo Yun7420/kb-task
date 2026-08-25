@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import styles from "./Modal.module.css";
 
 interface ModalProps {
@@ -8,11 +8,28 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, children }: ModalProps) {
+  // Escape로 닫기 (포커스 트랩은 과제 범위 밖)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.content} onClick={(e) => e.stopPropagation()}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={styles.content}
+        onClick={(e) => e.stopPropagation()}
+      >
         {children}
       </div>
     </div>

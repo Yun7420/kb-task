@@ -9,6 +9,7 @@ interface DeleteConfirmModalProps {
   onClose: () => void;
   onConfirm: () => void;
   isDeleting?: boolean;
+  errorMessage?: string | null;
 }
 
 export function DeleteConfirmModal({
@@ -16,6 +17,7 @@ export function DeleteConfirmModal({
   onClose,
   onConfirm,
   isDeleting,
+  errorMessage,
 }: DeleteConfirmModalProps) {
   const [input, setInput] = useState("");
   const isMatched = input === taskId;
@@ -29,7 +31,9 @@ export function DeleteConfirmModal({
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder={taskId}
+        aria-label="삭제 확인용 할 일 ID"
       />
+      {errorMessage && <p className={styles.error}>{errorMessage}</p>}
       <div className={styles.actions}>
         <Button type="button" onClick={onClose}>
           취소
