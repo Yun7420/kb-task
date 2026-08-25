@@ -1,8 +1,14 @@
-import axios from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/stores";
 import type { AuthTokenResponse } from "@/types";
 
 const REFRESH_PATH = "/refresh";
+
+/**
+ * 재발급 후 한 번 재시도한 요청인지 표시하기 위한 확장.
+ * axios 기본 config에는 없는 필드라, 실제로 사용하는 이 파일 안에서만 좁혀서 쓴다.
+ */
+type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 export const client = axios.create({
   baseURL: "/api",
@@ -51,7 +57,7 @@ client.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const config = error.config;
+    const config = error.config as RetriableConfig | undefined;
 
     // 재발급 요청 자체가 401 → 더 시도할 방법이 없으므로 재로그인을 유도한다.
     // (이 분기가 없으면 refresh 실패 → 재발급 → 또 실패가 무한히 반복된다)
