@@ -40,6 +40,7 @@
   - 모듈 경계를 넘는 상대경로를 `@/` 별칭으로 통일
   - `ProtectedRoute.tsx` 파일명을 컴포넌트 작명 규칙에 맞춤
   - 하드코딩된 `#fff`를 `--color-on-primary` 토큰으로 전환
+  - 페이지마다 반복되던 로딩·에러 표시를 `Loading`·`ErrorMessage` 공통 컴포넌트로 추출
 - **명세 준수** — 스키마 정의를 그대로 반영했습니다.
   - `TaskItem`이 `additionalProperties: false`라, 목록 응답에서 상세 전용 필드인
     `registerDatetime`을 제외했습니다

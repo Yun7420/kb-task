@@ -15,6 +15,8 @@ KB헬스케어 프론트엔드 과제 — 할 일 관리 애플리케이션
 
 ## 실행
 
+Node 22.12 이상이 필요합니다(`.nvmrc` 참고). 패키지 매니저는 pnpm을 사용합니다.
+
 ```bash
 pnpm install
 pnpm dev
@@ -49,7 +51,7 @@ pnpm dev
 ```
 src/
 ├── api/ 공통 axios 인스턴스 + 인터셉터
-├── components/ 공유 UI (Button, Input, Modal, Layout)
+├── components/ 공유 UI (Button, Input, Modal, Layout, Loading, ErrorMessage)
 ├── mocks/ MSW 핸들러 + 목 데이터
 ├── pages/ 페이지별 폴더 (각자 api/hooks/components/schema)
 ├── routes/ 라우터 + 인증 가드
