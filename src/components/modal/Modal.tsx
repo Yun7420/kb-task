@@ -8,7 +8,6 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, children }: ModalProps) {
-  // Escape로 닫기 (포커스 트랩은 과제 범위 밖)
   useEffect(() => {
     if (!isOpen) return;
 

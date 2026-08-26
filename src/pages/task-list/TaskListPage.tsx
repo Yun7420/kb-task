@@ -14,7 +14,7 @@ const TaskListPage = () => {
   } = useTaskList();
 
   if (isLoading) return <div>불러오는 중...</div>;
-  // 이미 불러온 페이지가 있으면 목록을 유지한다 (다음 페이지 실패로 전체를 감추지 않음)
+  // 다음 페이지 실패로 이미 불러온 목록까지 감추지 않는다
   if (isError && tasks.length === 0)
     return <div>할 일 목록을 불러오지 못했습니다.</div>;
 
@@ -44,6 +44,7 @@ const TaskListPage = () => {
                 top: 0,
                 left: 0,
                 width: "100%",
+                paddingBottom: "12px",
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >

@@ -27,7 +27,7 @@ export function useTaskList() {
     count: tasks.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 100,
-    overscan: 5,
+    overscan: 2,
   });
 
   const virtualItems = virtualizer.getVirtualItems();
@@ -40,8 +40,7 @@ export function useTaskList() {
       lastItem.index >= tasks.length - 1 &&
       hasNextPage &&
       !isFetchingNextPage &&
-      // 다음 페이지 요청이 실패한 뒤에는 멈춘다.
-      // 실패해도 hasNextPage는 true로 남아 있어, 막지 않으면 같은 요청을 무한히 반복한다.
+      // 실패해도 hasNextPage는 true로 남아, 막지 않으면 같은 요청을 무한히 반복한다
       !isFetchNextPageError
     ) {
       fetchNextPage();

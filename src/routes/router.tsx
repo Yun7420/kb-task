@@ -11,19 +11,13 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      // Sign In
       { path: "/sign-in", element: <SignInPage /> },
       {
-        // ProtectedRoute
         element: <ProtectedRoute />,
         children: [
-          // Dashboard
           { path: "/", element: <DashboardPage /> },
-          // Task List
           { path: "/task", element: <TaskListPage /> },
-          // Task Detail
           { path: "/task/:id", element: <TaskDetailPage /> },
-          // User
           { path: "/user", element: <UserPage /> },
         ],
       },
