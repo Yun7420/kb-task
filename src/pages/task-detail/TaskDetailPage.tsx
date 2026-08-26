@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/button";
+import { Loading } from "@/components/loading";
 import { useTaskDetail, useDeleteTask } from "./hooks";
 import { DeleteConfirmModal } from "./components";
 import styles from "./TaskDetailPage.module.css";
@@ -12,7 +13,7 @@ const TaskDetailPage = () => {
   const { mutate, isPending, errorMessage, clearError } = useDeleteTask();
   const [isModalOpen, setModalOpen] = useState(false);
 
-  if (isLoading) return <div>불러오는 중...</div>;
+  if (isLoading) return <Loading />;
 
   if (isError || !data) {
     return (

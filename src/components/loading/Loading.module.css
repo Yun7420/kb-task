@@ -1,0 +1,6 @@
+.loading {
+  margin: 0;
+  padding: 24px 0;
+  box-sizing: border-box;
+  color: var(--color-text-secondary);
+}

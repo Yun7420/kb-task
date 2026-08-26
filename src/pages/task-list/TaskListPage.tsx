@@ -1,3 +1,5 @@
+import { Loading } from "@/components/loading";
+import { ErrorMessage } from "@/components/error-message";
 import { useTaskList } from "./hooks";
 import { TaskCard } from "./components";
 import styles from "./TaskListPage.module.css";
@@ -13,10 +15,10 @@ const TaskListPage = () => {
     isFetchingNextPage,
   } = useTaskList();
 
-  if (isLoading) return <div>불러오는 중...</div>;
+  if (isLoading) return <Loading />;
   // 다음 페이지 실패로 이미 불러온 목록까지 감추지 않는다
   if (isError && tasks.length === 0)
-    return <div>할 일 목록을 불러오지 못했습니다.</div>;
+    return <ErrorMessage message="할 일 목록을 불러오지 못했습니다." />;
 
   if (tasks.length === 0) {
     return (
@@ -53,8 +55,10 @@ const TaskListPage = () => {
           ))}
         </div>
       </div>
-      {isFetchingNextPage && <div>더 불러오는 중...</div>}
-      {isFetchNextPageError && <p>다음 목록을 불러오지 못했습니다.</p>}
+      {isFetchingNextPage && <Loading />}
+      {isFetchNextPageError && (
+        <ErrorMessage message="다음 목록을 불러오지 못했습니다." />
+      )}
     </div>
   );
 };

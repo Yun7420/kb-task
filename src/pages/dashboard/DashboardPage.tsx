@@ -1,10 +1,13 @@
+import { Loading } from "@/components/loading";
+import { ErrorMessage } from "@/components/error-message";
 import { useDashboard } from "./hooks";
 import styles from "./DashboardPage.module.css";
 
 const DashboardPage = () => {
   const { data, isLoading, isError } = useDashboard();
-  if (isLoading) return <div>불러오는 중...</div>;
-  if (isError || !data) return <div>대시보드를 불러오지 못했습니다.</div>;
+  if (isLoading) return <Loading />;
+  if (isError || !data)
+    return <ErrorMessage message="대시보드를 불러오지 못했습니다." />;
 
   return (
     <div className={styles.page}>
