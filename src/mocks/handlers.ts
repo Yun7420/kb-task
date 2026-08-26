@@ -8,6 +8,9 @@ const EXPIRED_TOKEN = "expired-token";
 
 const REFRESH_TOKEN = "mock-refresh-token";
 
+// 만료 시연용 - 이 키가 true면 재발급이 항상 실패한다
+const REFRESH_EXPIRED_KEY = "mock-refresh-expired";
+
 let issuedAccessTokenCount = 0;
 const issueAccessToken = () => `access-token-${++issuedAccessTokenCount}`;
 
@@ -47,6 +50,14 @@ export const handlers = [
   }),
 
   http.post("/api/refresh", ({ cookies }) => {
+    // 재발급 실패 시나리오 재현용 - localStorage에 이 키를 두면 항상 401을 반환한다
+    if (localStorage.getItem(REFRESH_EXPIRED_KEY) === "true") {
+      return HttpResponse.json(
+        { errorMessage: "리프레시 토큰이 유효하지 않습니다." },
+        { status: 401 },
+      );
+    }
+
     const token = cookies.token;
     if (!token || token === "expired") {
       return HttpResponse.json(

@@ -28,38 +28,6 @@ pnpm dev
 - 이메일: `test@kb.com`
 - 비밀번호: `test1234`
 
-### 토큰 만료 흐름 확인
-
-MSW는 `expired-token`을 만료된 accessToken으로 취급합니다. 로그인 후 devtools 콘솔에서
-아래 두 시나리오를 확인할 수 있습니다.
-
-**① 재발급 성공** — 401 → `/api/refresh` → 새 토큰으로 재시도 → 화면 정상 표시
-
-```js
-localStorage.setItem(
-  "auth-storage",
-  JSON.stringify({ state: { accessToken: "expired-token" }, version: 0 }),
-);
-location.reload();
-```
-
-Network 탭에서 `401` → `POST /api/refresh` → 같은 요청 `200` 순서를 볼 수 있습니다.
-여러 요청이 동시에 401을 받아도 `/api/refresh`는 한 번만 호출됩니다(single-flight).
-
-**② 재발급 실패** — refresh 토큰까지 만료된 상황 → 인증 해제 후 로그인 페이지로 이동
-
-refresh 토큰 쿠키는 MSW가 `__msw-cookie-store__` 키로 보관합니다. 이를 지우고 새로고침하면
-재발급이 401로 실패하는 상황을 만들 수 있습니다.
-
-```js
-localStorage.removeItem("__msw-cookie-store__");
-localStorage.setItem(
-  "auth-storage",
-  JSON.stringify({ state: { accessToken: "expired-token" }, version: 0 }),
-);
-location.reload();
-```
-
 ## 구현 기능
 
 - **로그인** (`/sign-in`) — zod 유효성 검증, 실패 시 에러 모달, 성공 시 토큰 저장 + 인증 가드
@@ -148,7 +116,39 @@ axios 인스턴스에 `withCredentials: true`를 설정해 브라우저가 자�
 모킹에서는 적용되지 않습니다.** 실서버에서는 이 속성들이 함께 설정되어야 하며, 프론트 코드는
 쿠키를 만지지 않으므로 서버 교체 시 변경이 필요 없습니다.
 
-동작 확인 방법은 위 "토큰 만료 흐름 확인"을 참고하세요.
+### 토큰 만료 흐름 확인
+
+MSW는 `expired-token`을 만료된 accessToken으로 취급합니다. 로그인 후 devtools 콘솔에서
+아래 두 시나리오를 확인할 수 있습니다.
+
+**① 재발급 성공** — 401 → `/api/refresh` → 새 토큰으로 재시도 → 화면 정상 표시
+
+```js
+localStorage.setItem(
+  "auth-storage",
+  JSON.stringify({ state: { accessToken: "expired-token" }, version: 0 }),
+);
+location.reload();
+```
+
+Network 탭에서 `401` → `POST /api/refresh` → 같은 요청 `200` 순서를 볼 수 있습니다.
+여러 요청이 동시에 401을 받아도 `/api/refresh`는 한 번만 호출됩니다(single-flight).
+
+**② 재발급 실패** — refresh 토큰까지 만료된 상황 → 인증 해제 후 로그인 페이지로 이동
+
+MSW는 `mock-refresh-expired` 키가 `true`이면 재발급 요청에 항상 401을 반환합니다.
+
+```js
+localStorage.setItem("mock-refresh-expired", "true");
+localStorage.setItem(
+  "auth-storage",
+  JSON.stringify({ state: { accessToken: "expired-token" }, version: 0 }),
+);
+location.reload();
+```
+
+`401` → `POST /api/refresh` `401` 순서로 찍히고, 로그인 페이지로 이동합니다.
+원래대로 돌리려면 `localStorage.removeItem("mock-refresh-expired")` 후 다시 로그인하세요.
 
 ## 컨벤션
 
